@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
+import 'package:hoowave_memory_editor/app/data/service/process/process_service.dart';
 
-import '../../../data/service/library/library_service.dart';
 import '../controllers/process_controller.dart';
 
 class ProcessBinding extends Bindings {
@@ -8,7 +8,7 @@ class ProcessBinding extends Bindings {
   void dependencies() {
     Get.put(
       ProcessController(
-        Get.find<LibraryService>(),
+        Get.find<ProcessService>(),
       ),
     );
   }

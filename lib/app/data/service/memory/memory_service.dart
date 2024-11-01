@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'package:get/get.dart';
+import 'package:hoowave_memory_editor/app/data/service/library/library_service.dart';
 
 typedef ReadProcessMemoryFunc = Int32 Function(
     Int32, Pointer<Void>, Pointer<Void>, Int32);
@@ -12,22 +13,19 @@ typedef WriteProcessMemory = int Function(
     int, Pointer<Void>, Pointer<Void>, int);
 
 class MemoryService extends GetxService {
+  final LibraryService libraryService;
   late DynamicLibrary dylib;
   late ReadProcessMemory readProcessMemory;
   late WriteProcessMemory writeProcessMemory;
 
-  MemoryService() {
-    try {
-      dylib = DynamicLibrary.open("process_memory.dll");
-      readProcessMemory = dylib
-          .lookup<NativeFunction<ReadProcessMemoryFunc>>("readProcessMemory")
-          .asFunction();
-      writeProcessMemory = dylib
-          .lookup<NativeFunction<WriteProcessMemoryFunc>>("writeProcessMemory")
-          .asFunction();
-    } catch (e) {
-      print(e);
-    }
+  MemoryService(this.libraryService) {
+    dylib = libraryService.getDylib();
+    readProcessMemory = dylib
+        .lookup<NativeFunction<ReadProcessMemoryFunc>>("readProcessMemory")
+        .asFunction();
+    writeProcessMemory = dylib
+        .lookup<NativeFunction<WriteProcessMemoryFunc>>("writeProcessMemory")
+        .asFunction();
   }
 
   String readMemory(int processHandle, int address, int size) {

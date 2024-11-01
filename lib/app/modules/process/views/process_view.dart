@@ -3,7 +3,6 @@ import 'package:gap/gap.dart';
 
 import 'package:get/get.dart';
 import 'package:hoowave_memory_editor/app/modules/widgets/common_appbar.dart';
-import 'package:hoowave_memory_editor/app/modules/widgets/common_button.dart';
 
 import '../controllers/process_controller.dart';
 
@@ -36,19 +35,25 @@ class ProcessView extends GetView<ProcessController> {
       onTap: () {
         // controller.openProcess();
       },
-      child: Container(
-        height: 50,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Color(0xFF565656), // BBBFC5
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Center(
-          child: Text(
-            'Open Process',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
+      child: Obx(
+        () {
+          return Container(
+            height: 50,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: controller.selectedProcessIndex.value == 65535
+                  ? Color(0xFFBBBFC5)
+                  : Color(0xFF565656), //
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                'Open Process',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

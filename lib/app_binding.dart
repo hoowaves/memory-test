@@ -7,7 +7,7 @@ class AppBinding extends Bindings {
   @override
   void dependencies() {
     Get.put<LibraryService>(LibraryService(), permanent: true);
-    // Get.put<ProcessService>(ProcessService(), permanent: true);
-    // Get.put<MemoryService>(MemoryService(), permanent: true);
+    Get.put<ProcessService>(ProcessService(Get.find<LibraryService>()), permanent: true);
+    Get.put<MemoryService>(MemoryService(Get.find<LibraryService>()), permanent: true);
   }
 }

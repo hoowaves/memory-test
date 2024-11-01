@@ -16,6 +16,10 @@ class LibraryService extends GetxService {
     }
   }
 
+  DynamicLibrary getDylib(){
+    return dylib;
+  }
+
   bool getLoadStatus(){
     return isLoaded.value;
   }

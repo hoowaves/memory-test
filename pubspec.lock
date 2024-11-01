@@ -341,6 +341,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  win32:
+    dependency: "direct main"
+    description:
+      name: win32
+      sha256: "10169d3934549017f0ae278ccb07f828f9d6ea21573bab0fb77b0e1ef0fce454"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.7.2"
   xml:
     dependency: transitive
     description:

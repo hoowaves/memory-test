@@ -1,17 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:hoowave_memory_editor/app/data/service/library/library_service.dart';
+import 'package:hoowave_memory_editor/app/data/service/process/process_service.dart';
 
 import '../../../../env.dart';
 import '../../widgets/common_dialog.dart';
 
 class ProcessController extends GetxController {
-  final LibraryService libraryService;
+  final ProcessService processService;
 
-  ProcessController(this.libraryService);
+  ProcessController(this.processService);
 
   final ScrollController scrollController = ScrollController();
-  List<String> processList = [
+  final RxList<String> processList = [
     "1 process1",
     "2 process2",
     "3 process3",
@@ -27,8 +28,8 @@ class ProcessController extends GetxController {
     "13 process13",
     "14 process14",
     "15 process15",
-  ];
-  final RxInt selectedProcessIndex = 0.obs;
+  ].obs;
+  final RxInt selectedProcessIndex = 65535.obs;
 
   @override
   void onInit() {
@@ -38,13 +39,14 @@ class ProcessController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    if (!libraryService.getLoadStatus()) {
+    if (!processService.libraryService.getLoadStatus()) {
       CommonDialog.error(
           content: "${Env.libName}\nNot Load",
           onRetryPressed: () {
             Get.back();
           });
     }
+    final processList = processService.fetchProcessList();
 
   }
 
