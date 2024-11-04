@@ -24,7 +24,8 @@ class ProcessService extends GetxService {
   int? currentProcessHandle;
 
   ProcessService(this.libraryService) {
-    dylib = libraryService.getDylib();
+    if(libraryService.isLoaded.value == false) return;
+    dylib = libraryService.getDylib()!;
     openProcess = dylib
         .lookup<NativeFunction<OpenProcessFunc>>("openProcess")
         .asFunction();

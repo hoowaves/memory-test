@@ -1,9 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:hoowave_memory_editor/app/data/model/memory_model.dart';
 
 class MemoryController extends GetxController {
-  //TODO: Implement MemoryController
+  final ScrollController readScrollController = ScrollController();
+  final ScrollController writeScrollController = ScrollController();
 
-  final count = 0.obs;
+  final RxList<MemoryModel> readMemoryList = <MemoryModel>[].obs;
+  final RxList<MemoryModel> writeMemoryList = <MemoryModel>[].obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -18,6 +23,4 @@ class MemoryController extends GetxController {
   void onClose() {
     super.onClose();
   }
-
-  void increment() => count.value++;
 }

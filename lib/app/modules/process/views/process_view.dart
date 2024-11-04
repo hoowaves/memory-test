@@ -19,11 +19,11 @@ class ProcessView extends GetView<ProcessController> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            CommonAppBar.buildUp(),
+            CommonAppBar.buildHeader(title: 'Please select a process'),
             _buildProcessList(),
             Gap(10),
             _buildOpenButton(),
-            CommonAppBar.buildDown(),
+            CommonAppBar.buildFooter(),
           ],
         ),
       ),
@@ -33,7 +33,7 @@ class ProcessView extends GetView<ProcessController> {
   Widget _buildOpenButton() {
     return GestureDetector(
       onTap: () {
-        // controller.openProcess();
+        controller.pushMemory();
       },
       child: Obx(
         () {

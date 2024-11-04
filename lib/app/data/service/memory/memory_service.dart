@@ -19,7 +19,8 @@ class MemoryService extends GetxService {
   late WriteProcessMemory writeProcessMemory;
 
   MemoryService(this.libraryService) {
-    dylib = libraryService.getDylib();
+    if(libraryService.isLoaded.value == false) return;
+    dylib = libraryService.getDylib()!;
     readProcessMemory = dylib
         .lookup<NativeFunction<ReadProcessMemoryFunc>>("readProcessMemory")
         .asFunction();

@@ -3,11 +3,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 
 class CommonAppBar {
-  static Widget buildUp() {
+  static Widget buildHeader({
+    required String title,
+}
+      ) {
     return Column(
       children: [
         Text(
-          'Please select a process',
+          title,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -20,7 +23,7 @@ class CommonAppBar {
     );
   }
 
-  static Widget buildDown() {
+  static Widget buildFooter() {
     return Column(
       children: [
         // Divider(color: Color(0xFF9EA7B3), thickness: 1),

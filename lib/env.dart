@@ -9,20 +9,18 @@ import 'package:win32/win32.dart';
 import 'app/routes/app_pages.dart';
 import 'app_binding.dart';
 
-enum BuildType { dev, prod }
+enum BuildType { windows, mac }
 
 class Env {
   static Env? _instance;
 
   static get instance => _instance;
 
-  static bool get isDev => _instance!._buildType == BuildType.dev;
+  static bool get isWindows => _instance!._buildType == BuildType.windows;
 
-  static bool get isProd => _instance!._buildType == BuildType.prod;
+  static bool get isMac => _instance!._buildType == BuildType.mac;
 
   static Size get appSize => const Size(400, 600);
-
-  static String get libName => "assets/dlls/hoowave_memory_editor.dll";
 
   late BuildType _buildType;
 
@@ -33,6 +31,11 @@ class Env {
   factory Env.newInstance(BuildType buildType) {
     _instance ??= Env(buildType);
     return _instance!;
+  }
+
+  String getLibName(){
+    if(_buildType == BuildType.windows) return "assets/dlls/hoowave_memory_editor.dll";
+    return "test.dll";
   }
 
   Future<void> setWindow() async{
@@ -50,7 +53,7 @@ class Env {
   }
 
   void run() async{
-    await setWindow();
+    // await setWindow();
     runApp(const Init());
   }
 }

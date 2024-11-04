@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:hoowave_memory_editor/app/data/service/library/library_service.dart';
 import 'package:hoowave_memory_editor/app/data/service/process/process_service.dart';
+import 'package:hoowave_memory_editor/app/routes/app_pages.dart';
 
 import '../../../../env.dart';
 import '../../widgets/common_dialog.dart';
@@ -11,6 +12,7 @@ class ProcessController extends GetxController {
 
   ProcessController(this.processService);
 
+  final Env _env = Env.instance;
   final ScrollController scrollController = ScrollController();
   final RxList<String> processList = [
     "1 process1",
@@ -41,7 +43,7 @@ class ProcessController extends GetxController {
     super.onReady();
     if (!processService.libraryService.getLoadStatus()) {
       CommonDialog.error(
-          content: "${Env.libName}\nNot Load",
+          content: "${_env.getLibName()} Not Load",
           onRetryPressed: () {
             Get.back();
           });
@@ -53,5 +55,10 @@ class ProcessController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  void pushMemory(){
+    if(selectedProcessIndex.value == 65535) return;
+    Get.toNamed(Routes.MEMORY);
   }
 }
