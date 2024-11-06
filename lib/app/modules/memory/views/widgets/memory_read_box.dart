@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:hoowave_memory_editor/app/modules/memory/controllers/memory_controller.dart';
+
+import '../../../../data/model/memory_model.dart';
 
 class MemoryReadBox {
   static Widget build({required MemoryController controller}) {
@@ -12,81 +15,138 @@ class MemoryReadBox {
           ),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: RawScrollbar(
-          controller: controller.readScrollController,
-          radius: Radius.circular(10),
-          thumbVisibility: true,
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView(
-                  controller: controller.readScrollController,
-                  children: [
-                    Text("11"),
-                    Gap(300),
-                    Text("22"),
-                  ],
-                ),
-                // child: ListView.builder(
-                //   controller: controller.readScrollController,
-                //   itemCount: controller.readMemoryList.length,
-                //   itemBuilder: (context, index) {
-                //     return Obx(
-                //       () {
-                //         return _buildItem(
-                //             processId:
-                //                 controller.readMemoryList[index].processId);
-                //       },
-                //     );
-                //   },
-                // ),
-              ),
-              Divider(),
-              _buildReadText(),
-            ],
-          ),
+        child: Column(
+          children: [
+            _buildReadText(controller: controller),
+            Divider(
+              height: 0,
+            ),
+            Obx(
+              () {
+                return Expanded(
+                  child: ListView.builder(
+                    controller: controller.readScrollController,
+                    itemCount: controller.readMemoryList.length,
+                    itemBuilder: (context, index) {
+                      return Obx(
+                        () {
+                          return _buildItem(
+                              controller: controller, index: index);
+                        },
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
   }
 
-  static Widget _buildItem({required int processId}) {
+  static Widget _buildItem(
+      {required int index, required MemoryController controller}) {
     return Column(
       children: [
-        GestureDetector(
-          onTap: () {
-            // controller.selectedProcessIndex.value = index;
-          },
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Color(0xFFEFF1F4),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              "dd",
-              style: TextStyle(
-                fontSize: 15,
-                color: Color(0xFF565656),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Color(0xFFEFF1F4),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 100,
+                child: TextField(
+                  controller:
+                      controller.readMemoryList[index].addressController,
+                  onSubmitted: (_) {
+                    // controller.readMemoryList[index].updateAddressFromText();
+                  },
+                  style: const TextStyle(fontSize: 12),
+                  decoration: const InputDecoration(
+                    hintStyle: TextStyle(fontSize: 12),
+                    hintText: '00400000',
+                    labelText: '0x',
+                    labelStyle: TextStyle(fontSize: 12),
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                ),
               ),
-            ),
+              Obx(
+                () {
+                  return Text(
+                    controller.readMemoryList[index].formatValue(
+                        controller.readMemoryList[index].value ?? 10101),
+                  );
+                },
+              ),
+              Obx(
+                () {
+                  return DropdownButton<MemoryFormat>(
+                    value:
+                        controller.readMemoryList[index].selectedFormat.value,
+                    iconSize: 16,
+                    style: TextStyle(fontSize: 12, color: Colors.black),
+                    onChanged: (newFormat) {
+                      if (newFormat != null) {
+                        controller.readMemoryList[index].selectedFormat.value =
+                            newFormat;
+                      }
+                    },
+                    items: MemoryFormat.values.map((format) {
+                      return DropdownMenuItem(
+                        value: format,
+                        child: Text(format.toString().split('.').last),
+                      );
+                    }).toList(),
+                  );
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () {
+                  controller.deleteReadSlot(index);
+                },
+              ),
+            ],
           ),
         ),
-        Divider(color: Color(0xFF9EA7B3), thickness: 1),
+        Divider(color: Color(0xFF9EA7B3), height: 0),
       ],
     );
   }
 
-  static Widget _buildReadText() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 12, right: 12, bottom: 5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("Read Memory Slot"),
-          IconButton(icon: Icon(Icons.add), onPressed: () {}),
-        ],
+  static Widget _buildReadText({required MemoryController controller}) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
+        color: Color(0xFFCFD3DB),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 30, right: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("Address"),
+            Text("   Value"),
+            Text("Format"),
+            IconButton(
+              icon: Icon(Icons.add_circle),
+              onPressed: () {
+                controller.addReadSlot();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

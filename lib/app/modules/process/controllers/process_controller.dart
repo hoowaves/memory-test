@@ -46,7 +46,10 @@ class ProcessController extends GetxController {
   }
 
   void pushMemory(){
-    if(selectedProcessIndex.value == 65535) return;
+    // if(selectedProcessIndex.value == 65535) return;
+    // ProcessModel processModel = processList[selectedProcessIndex.value];
+    // processService.openProcess(processModel.pid);
+    // Get.toNamed(Routes.MEMORY, arguments: processModel);
     Get.toNamed(Routes.MEMORY);
   }
 }

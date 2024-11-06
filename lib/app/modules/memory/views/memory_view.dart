@@ -21,7 +21,7 @@ class MemoryView extends GetView<MemoryController> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            CommonAppBar.buildHeader(title: 'Process Name'),
+            CommonAppBar.buildHeader(title: controller.processModel.name),
             MemoryReadBox.build(controller: controller),
             Gap(20),
             MemoryWriteBox.build(controller: controller),

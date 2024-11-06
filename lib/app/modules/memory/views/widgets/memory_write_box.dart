@@ -18,6 +18,8 @@ class MemoryWriteBox{
           thumbVisibility: true,
           child: Column(
             children: [
+              _buildWriteText(),
+              Divider(height: 0),
               Expanded(
                 child: ListView(
                   controller: controller.writeScrollController,
@@ -41,8 +43,6 @@ class MemoryWriteBox{
                 //   },
                 // ),
               ),
-              Divider(),
-              _buildWriteText(),
             ],
           ),
         ),
@@ -83,7 +83,7 @@ class MemoryWriteBox{
 
   static Widget _buildWriteText() {
     return Padding(
-      padding: const EdgeInsets.only(left: 12, right: 12, bottom: 5),
+      padding: const EdgeInsets.only(left: 12, right: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

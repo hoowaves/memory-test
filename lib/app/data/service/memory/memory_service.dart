@@ -35,6 +35,7 @@ class MemoryService extends GetxService {
             processHandle, Pointer.fromAddress(address), buffer.cast(), size) !=
         0) {
       final data = buffer.asTypedList(size);
+      print(data);
       malloc.free(buffer);
       return data.map((e) => e.toRadixString(16)).join(" ");
     } else {

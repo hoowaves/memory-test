@@ -79,7 +79,6 @@ class ProcessView extends GetView<ProcessController> {
             controller: controller.scrollController,
             itemCount: controller.processList.length,
             itemBuilder: (context, index) {
-              print('Current index: $index, processList length: ${controller.processList.length}');
               return Obx(
                 () {
                   return _buildProcessItem(index: index);
