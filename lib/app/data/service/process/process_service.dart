@@ -1,25 +1,31 @@
 import 'dart:convert';
-import 'dart:ffi';
+import 'dart:ffi' as ffi;
 import 'package:ffi/ffi.dart';
 import 'package:get/get.dart';
 import 'package:hoowave_memory_editor/app/data/service/library/library_service.dart';
 
-typedef OpenProcessFunc = Int32 Function(Int32);
+import '../../model/process_model.dart';
+
+typedef OpenProcessFunc = ffi.Int32 Function(ffi.Int32);
 typedef OpenProcess = int Function(int);
 
-typedef CloseProcessFunc = Int32 Function(Int32);
+typedef CloseProcessFunc = ffi.Int32 Function(ffi.Int32);
 typedef CloseProcess = int Function(int);
 
-typedef GetProcessListFunc = Void Function(Pointer<Void> buffer, Int32 bufferSize);
-typedef GetProcessList = void Function(Pointer<Void> buffer, int bufferSize);
+typedef GetApplicationListFunc = ffi.Void Function(ffi.Pointer<ffi.Void>, ffi.Int32);
+typedef GetApplicationList = void Function(ffi.Pointer<ffi.Void>, int);
+
+typedef GetProcessListFunc = ffi.Void Function(ffi.Pointer<ffi.Void> buffer, ffi.Int32 bufferSize);
+typedef GetProcessList = void Function(ffi.Pointer<ffi.Void> buffer, int bufferSize);
 
 
 class ProcessService extends GetxService {
   final LibraryService libraryService;
-  late DynamicLibrary dylib;
+  late ffi.DynamicLibrary dylib;
   late OpenProcess openProcess;
   late CloseProcess closeProcess;
-  late GetProcessList getProcessList;
+  // late GetProcessList getProcessList;
+  late GetApplicationList getApplicationList;
 
   int? currentProcessHandle;
 
@@ -27,26 +33,45 @@ class ProcessService extends GetxService {
     if(libraryService.isLoaded.value == false) return;
     dylib = libraryService.getDylib()!;
     openProcess = dylib
-        .lookup<NativeFunction<OpenProcessFunc>>("openProcess")
+        .lookup<ffi.NativeFunction<OpenProcessFunc>>("openProcess")
         .asFunction();
 
     closeProcess = dylib
-        .lookup<NativeFunction<CloseProcessFunc>>("closeProcess")
+        .lookup<ffi.NativeFunction<CloseProcessFunc>>("closeProcess")
         .asFunction();
 
-    getProcessList = dylib
-        .lookup<NativeFunction<GetProcessListFunc>>("getProcessList")
-        .asFunction();
+    getApplicationList = dylib
+        .lookupFunction<GetApplicationListFunc, GetApplicationList>('getApplicationList');
+
+    // getProcessList = dylib
+    //     .lookup<NativeFunction<GetProcessListFunc>>("getProcessList")
+    //     .asFunction();
   }
 
-  void fetchProcessList() {
-    const int bufferSize = 20000;
-    final Pointer<Uint8> buffer = calloc<Uint8>(bufferSize);
+  // void fetchProcessList() {
+  //   const int bufferSize = 20000;
+  //   final Pointer<Uint8> buffer = calloc<Uint8>(bufferSize);
+  //
+  //   getProcessList(buffer.cast<Void>(), bufferSize);
+  //
+  //   final resultString = buffer.cast<Utf8>().toDartString();
+  //   print('Process List: $resultString');
+  // }
 
-    getProcessList(buffer.cast<Void>(), bufferSize);
+  List<ProcessModel> fetchApplicationList(){
+    final bufferSize = 4096;
+    final buffer = calloc<ffi.Uint8>(bufferSize);
 
-    final resultString = buffer.cast<Utf8>().toDartString();
-    print('Process List: $resultString');
+    try {
+      getApplicationList(buffer.cast(), bufferSize);
+
+      final jsonString = buffer.cast<Utf8>().toDartString();
+      final List<dynamic> jsonData = jsonDecode(jsonString);
+      final processList = jsonData.map((item) => ProcessModel.fromJson(item)).toList();
+      return processList;
+    } finally {
+      calloc.free(buffer);
+    }
   }
 
   void openTargetProcess(int processID) {

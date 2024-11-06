@@ -20,7 +20,9 @@ class ProcessView extends GetView<ProcessController> {
         child: Column(
           children: [
             CommonAppBar.buildHeader(title: 'Please select a process'),
-            _buildProcessList(),
+            Obx((){
+              return _buildProcessList();
+            }),
             Gap(10),
             _buildOpenButton(),
             CommonAppBar.buildFooter(),
@@ -77,10 +79,10 @@ class ProcessView extends GetView<ProcessController> {
             controller: controller.scrollController,
             itemCount: controller.processList.length,
             itemBuilder: (context, index) {
+              print('Current index: $index, processList length: ${controller.processList.length}');
               return Obx(
                 () {
-                  return _buildProcessItem(
-                      name: controller.processList[index], index: index);
+                  return _buildProcessItem(index: index);
                 },
               );
             },
@@ -90,7 +92,7 @@ class ProcessView extends GetView<ProcessController> {
     );
   }
 
-  Widget _buildProcessItem({required String name, required int index}) {
+  Widget _buildProcessItem({required int index}) {
     return Padding(
       padding: const EdgeInsets.only(top: 10, left: 16.0, right: 16.0),
       child: Column(
@@ -109,7 +111,7 @@ class ProcessView extends GetView<ProcessController> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                name,
+                controller.processList[index].name,
                 style: TextStyle(
                   fontSize: 15,
                   color: Color(0xFF565656),
