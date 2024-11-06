@@ -34,7 +34,7 @@ class Env {
   }
 
   String getLibName(){
-    if(_buildType == BuildType.windows) return "assets/dlls/hoowave_memory_editor.dll";
+    if(_buildType == BuildType.windows) return "hoowave_memory_editor.dll";
     return "test.dll";
   }
 
@@ -47,13 +47,13 @@ class Env {
     await Future.delayed(const Duration(milliseconds: 100));
     final hwnd = FindWindow(className, ffi.nullptr);
     if (hwnd != 0) {
-      final style = GetWindowLongPtr(hwnd, GWL_STYLE);
-      SetWindowLongPtr(hwnd, GWL_STYLE, style & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX);
+      final style = GetWindowLongPtr(hwnd, WINDOW_LONG_PTR_INDEX.GWL_STYLE);
+      SetWindowLongPtr(hwnd, WINDOW_LONG_PTR_INDEX.GWL_STYLE, style & ~WINDOW_STYLE.WS_SIZEBOX & ~WINDOW_STYLE.WS_MAXIMIZEBOX);
     }
   }
 
   void run() async{
-    // await setWindow();
+    await setWindow();
     runApp(const Init());
   }
 }

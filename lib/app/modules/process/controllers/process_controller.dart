@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:hoowave_memory_editor/app/data/model/current_process_model.dart';
 import 'package:hoowave_memory_editor/app/data/service/library/library_service.dart';
 import 'package:hoowave_memory_editor/app/data/service/process/process_service.dart';
 import 'package:hoowave_memory_editor/app/routes/app_pages.dart';
@@ -30,14 +33,10 @@ class ProcessController extends GetxController {
       CommonDialog.error(
           content: "${_env.getLibName()} Not Load",
           onRetryPressed: () {
-            Get.back();
+            exit(0);
           });
     }
     processList.value = processService.fetchApplicationList();
-    for (var process in processList) {
-      print(process);
-    }
-
   }
 
   @override
@@ -46,10 +45,9 @@ class ProcessController extends GetxController {
   }
 
   void pushMemory(){
-    // if(selectedProcessIndex.value == 65535) return;
-    // ProcessModel processModel = processList[selectedProcessIndex.value];
-    // processService.openProcess(processModel.pid);
-    // Get.toNamed(Routes.MEMORY, arguments: processModel);
-    Get.toNamed(Routes.MEMORY);
+    if(selectedProcessIndex.value == 65535) return;
+    ProcessModel processModel = processList[selectedProcessIndex.value];
+    CurrentProcessModel currentProcessModel = processService.openTargetProcess(processModel);
+    Get.toNamed(Routes.MEMORY, arguments: currentProcessModel);
   }
 }

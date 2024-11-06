@@ -21,7 +21,10 @@ class MemoryView extends GetView<MemoryController> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            CommonAppBar.buildHeader(title: controller.processModel.name),
+            Obx(() {
+              return CommonAppBar.buildHeader(
+                  title: controller.processHandler.value.name);
+            }),
             MemoryReadBox.build(controller: controller),
             Gap(20),
             MemoryWriteBox.build(controller: controller),
@@ -31,5 +34,4 @@ class MemoryView extends GetView<MemoryController> {
       ),
     );
   }
-
 }

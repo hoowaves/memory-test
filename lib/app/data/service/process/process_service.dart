@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ffi' as ffi;
 import 'package:ffi/ffi.dart';
 import 'package:get/get.dart';
+import 'package:hoowave_memory_editor/app/data/model/current_process_model.dart';
 import 'package:hoowave_memory_editor/app/data/service/library/library_service.dart';
 
 import '../../model/process_model.dart';
@@ -74,8 +75,9 @@ class ProcessService extends GetxService {
     }
   }
 
-  void openTargetProcess(int processID) {
-    currentProcessHandle = openProcess(processID);
+  CurrentProcessModel openTargetProcess(ProcessModel processModel) {
+    final processHandle = openProcess(processModel.pid);
+    return CurrentProcessModel(processHandle: processHandle, name: processModel.name);
   }
 
   void closeTargetProcess() {

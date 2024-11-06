@@ -29,28 +29,45 @@ class MemoryService extends GetxService {
         .asFunction();
   }
 
-  String readMemory(int processHandle, int address, int size) {
+  int readMemory(int processHandle, int address, int size) {
     final buffer = malloc<Uint8>(size);
     if (readProcessMemory(
             processHandle, Pointer.fromAddress(address), buffer.cast(), size) !=
         0) {
       final data = buffer.asTypedList(size);
-      print(data);
+      int result = 0;
+      if (data.length == 1) {
+        result = data[0];
+      } else if (data.length == 2) {
+        result = data[0] | (data[1] << 8);
+      } else if (data.length == 4) {
+        result = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
+      }
+      // print(result);
       malloc.free(buffer);
-      return data.map((e) => e.toRadixString(16)).join(" ");
+      return result;
     } else {
       malloc.free(buffer);
-      return "Failed to read memory";
+      return -1;
     }
   }
 
-  bool writeMemory(int processHandle, int address, List<int> data) {
-    final buffer = malloc<Uint8>(data.length);
-    final typedBuffer = buffer.asTypedList(data.length);
-    typedBuffer.setAll(0, data);
+  bool writeMemory(int processHandle, int address, int data) {
+    final List<int> byteArray = [
+      data & 0xFF,
+      (data >> 8) & 0xFF,
+      (data >> 16) & 0xFF,
+      (data >> 24) & 0xFF
+    ];
+    print(byteArray);
+    final buffer = malloc<Uint8>(byteArray.length);
+    final typedBuffer = buffer.asTypedList(byteArray.length);
+    typedBuffer.setAll(0, byteArray);
+
     final result = writeProcessMemory(processHandle,
-        Pointer.fromAddress(address), buffer.cast(), data.length);
+        Pointer.fromAddress(address), buffer.cast(), byteArray.length);
     malloc.free(buffer);
+
     return result != 0;
   }
 }

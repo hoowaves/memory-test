@@ -70,22 +70,16 @@ class ProcessView extends GetView<ProcessController> {
           borderRadius: BorderRadius.circular(10),
         ),
         // padding: const EdgeInsets.all(16.0),
-        child: RawScrollbar(
+        child: ListView.builder(
           controller: controller.scrollController,
-          // thumbColor: Colors.blue,
-          radius: Radius.circular(10),
-          thumbVisibility: true,
-          child: ListView.builder(
-            controller: controller.scrollController,
-            itemCount: controller.processList.length,
-            itemBuilder: (context, index) {
-              return Obx(
-                () {
-                  return _buildProcessItem(index: index);
-                },
-              );
-            },
-          ),
+          itemCount: controller.processList.length,
+          itemBuilder: (context, index) {
+            return Obx(
+                  () {
+                return _buildProcessItem(index: index);
+              },
+            );
+          },
         ),
       ),
     );

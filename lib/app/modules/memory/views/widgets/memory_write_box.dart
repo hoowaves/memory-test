@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:hoowave_memory_editor/app/modules/memory/controllers/memory_controller.dart';
 
-class MemoryWriteBox{
+import '../../../../data/model/memory_format.dart';
+
+class MemoryWriteBox {
   static Widget build({required MemoryController controller}) {
     return Expanded(
       child: Container(
@@ -12,86 +14,149 @@ class MemoryWriteBox{
           ),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: RawScrollbar(
-          controller: controller.writeScrollController,
-          radius: Radius.circular(10),
-          thumbVisibility: true,
-          child: Column(
-            children: [
-              _buildWriteText(),
-              Divider(height: 0),
-              Expanded(
-                child: ListView(
-                  controller: controller.writeScrollController,
-                  children: [
-                    Text("11"),
-                    Gap(300),
-                    Text("22"),
-                  ],
-                ),
-                // child: ListView.builder(
-                //   controller: controller.readScrollController,
-                //   itemCount: controller.readMemoryList.length,
-                //   itemBuilder: (context, index) {
-                //     return Obx(
-                //       () {
-                //         return _buildItem(
-                //             processId:
-                //                 controller.readMemoryList[index].processId);
-                //       },
-                //     );
-                //   },
-                // ),
-              ),
-            ],
-          ),
+        child: Column(
+          children: [
+            _buildWriteText(controller: controller),
+            Divider(
+              height: 0,
+            ),
+            Obx(
+              () {
+                return Expanded(
+                  child: ListView.builder(
+                    controller: controller.writeScrollController,
+                    itemCount: controller.writeMemoryList.length,
+                    itemBuilder: (context, index) {
+                      return Obx(
+                        () {
+                          return _buildItem(
+                              controller: controller, index: index);
+                        },
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
   }
 
-  static Widget _buildItem({required int processId}) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, left: 16.0, right: 16.0),
-      child: Column(
-        children: [
-          GestureDetector(
-            onTap: () {
-              // controller.selectedProcessIndex.value = index;
-            },
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Color(0xFFEFF1F4),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                "dd",
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Color(0xFF565656),
+  static Widget _buildItem(
+      {required int index, required MemoryController controller}) {
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Color(0xFFEFF1F4),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 100,
+                child: TextField(
+                  controller:
+                      controller.writeMemoryList[index].addressController,
+                  style: const TextStyle(fontSize: 12),
+                  decoration: const InputDecoration(
+                    hintStyle: TextStyle(fontSize: 12),
+                    hintText: '00400000',
+                    labelText: '0x',
+                    labelStyle: TextStyle(fontSize: 12),
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
                 ),
               ),
-            ),
+              Container(
+                width: 100,
+                child: TextField(
+                  controller: controller.writeMemoryList[index].valueController,
+                  style: const TextStyle(fontSize: 12),
+                  decoration: const InputDecoration(
+                    hintStyle: TextStyle(fontSize: 12),
+                    labelStyle: TextStyle(fontSize: 12),
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                ),
+              ),
+              OutlinedButton(
+                onPressed: controller.writeMemoryList[index].isDisable.value ? null : () {
+                  controller.writeMemory(index);
+                },
+                style: ButtonStyle(
+                  side: WidgetStateProperty.all(
+                    BorderSide(color: Color(0xFF9EA7B3)),
+                  ),
+                  shape: WidgetStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                    (states) {
+                      if (states.contains(WidgetState.hovered)) {
+                        return Color(0xFFE0E6F1);
+                      }
+                      if (states.contains(WidgetState.pressed)) {
+                        return Color(0xFF4A90E2);
+                      }
+                      return Colors.transparent;
+                    },
+                  ),
+                ),
+                child: Text(
+                  "Send",
+                  style: TextStyle(color: controller.writeMemoryList[index].isDisable.value ? Colors.grey : Colors.green),
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () {
+                  controller.deleteWriteSlot(index);
+                },
+              ),
+            ],
           ),
-          Divider(color: Color(0xFF9EA7B3), thickness: 1),
-        ],
-      ),
+        ),
+        Divider(color: Color(0xFF9EA7B3), height: 0),
+      ],
     );
   }
 
-  static Widget _buildWriteText() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 12, right: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("Write Memory Slot"),
-          IconButton(icon: Icon(Icons.add), onPressed: () {}),
-        ],
+  static Widget _buildWriteText({required MemoryController controller}) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
+        color: Color(0xFFCFD3DB),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 30, right: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("Address"),
+            Text("Value"),
+            Text(""),
+            IconButton(
+              icon: Icon(Icons.add_circle),
+              onPressed: () {
+                controller.addWriteSlot();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
-
 }

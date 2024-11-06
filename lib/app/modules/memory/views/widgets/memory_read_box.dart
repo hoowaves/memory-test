@@ -3,7 +3,8 @@ import 'package:gap/gap.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:hoowave_memory_editor/app/modules/memory/controllers/memory_controller.dart';
 
-import '../../../../data/model/memory_model.dart';
+import '../../../../data/model/memory_format.dart';
+import '../../../../data/model/read_memory_model.dart';
 
 class MemoryReadBox {
   static Widget build({required MemoryController controller}) {
@@ -64,8 +65,8 @@ class MemoryReadBox {
                 child: TextField(
                   controller:
                       controller.readMemoryList[index].addressController,
-                  onSubmitted: (_) {
-                    // controller.readMemoryList[index].updateAddressFromText();
+                  onChanged: (_) {
+                    controller.startReadMemory(index);
                   },
                   style: const TextStyle(fontSize: 12),
                   decoration: const InputDecoration(
@@ -81,8 +82,11 @@ class MemoryReadBox {
               Obx(
                 () {
                   return Text(
-                    controller.readMemoryList[index].formatValue(
-                        controller.readMemoryList[index].value ?? 10101),
+                    controller.readMemoryList[index].resultValue.value == -1
+                        ? '??'
+                        : controller.readMemoryList[index].formatValue(
+                            controller.readMemoryList[index].resultValue.value,
+                          ),
                   );
                 },
               ),
@@ -102,7 +106,7 @@ class MemoryReadBox {
                     items: MemoryFormat.values.map((format) {
                       return DropdownMenuItem(
                         value: format,
-                        child: Text(format.toString().split('.').last),
+                        child: Text(format.displayName), // displayName을 사용
                       );
                     }).toList(),
                   );
