@@ -64,9 +64,8 @@ class MemoryController extends GetxController {
     int? address = int.tryParse(writeMemoryList[index].addressController.text, radix: 16);
     if(address == null) return;
     int? value = int.tryParse(writeMemoryList[index].valueController.text, radix: 16);
-    print(value);
     if(value == null) return;
-    bool result = memoryService.writeMemory(handle, address!, value);
+    bool result = memoryService.writeMemory(handle, address, value);
   }
 
   void addReadSlot() {

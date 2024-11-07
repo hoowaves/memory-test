@@ -34,8 +34,7 @@ class Env {
   }
 
   String getLibName(){
-    if(_buildType == BuildType.windows) return "hoowave_memory_editor.dll";
-    return "test.dll";
+    return "hoowave_memory_editor.dll";
   }
 
   Future<void> setWindow() async{
@@ -53,7 +52,7 @@ class Env {
   }
 
   void run() async{
-    await setWindow();
+    if(Env.isWindows) await setWindow();
     runApp(const Init());
   }
 }

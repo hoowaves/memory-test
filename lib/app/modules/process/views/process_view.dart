@@ -20,7 +20,7 @@ class ProcessView extends GetView<ProcessController> {
         child: Column(
           children: [
             CommonAppBar.buildHeader(title: 'Please select a process'),
-            Obx((){
+            Obx(() {
               return _buildProcessList();
             }),
             Gap(10),
@@ -69,18 +69,87 @@ class ProcessView extends GetView<ProcessController> {
           ),
           borderRadius: BorderRadius.circular(10),
         ),
-        // padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          controller: controller.scrollController,
-          itemCount: controller.processList.length,
-          itemBuilder: (context, index) {
-            return Obx(
-                  () {
-                return _buildProcessItem(index: index);
-              },
-            );
-          },
+        child: Column(
+          children: [
+            _buildReadText(),
+            Divider(height: 0),
+            Expanded(
+              child: ListView.builder(
+                controller: controller.scrollController,
+                itemCount: controller.processList.length,
+                itemBuilder: (context, index) {
+                  return Obx(
+                    () {
+                      return _buildProcessItem(index: index);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildReadText() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
+        color: Color(0xFFCFD3DB),
+      ),
+      child: Stack(
+        alignment: Alignment.centerRight, // Stack에서 IconButton을 오른쪽 중앙에 배치
+        children: [
+          Container(
+            height: 36,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 26),
+                      child: Text(
+                        "PID",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Color(0xFF565656),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 26),
+                      child: Text(
+                        "Process Name",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Color(0xFF565656),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            right: 0,
+            child: IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: () {
+                controller.loadList();
+              },
+            ),
+          )
+        ],
       ),
     );
   }
@@ -103,12 +172,32 @@ class ProcessView extends GetView<ProcessController> {
                     : Color(0xFFEFF1F4),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Text(
-                controller.processList[index].name,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Color(0xFF565656),
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        controller.processList[index].pid.toString(),
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Color(0xFF565656),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        controller.processList[index].name,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Color(0xFF565656),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

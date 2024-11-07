@@ -29,9 +29,9 @@ class CommonDialog {
                       textAlign: TextAlign.center,
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Gap(30),
+                  Gap(20),
                   Text(content, textAlign: TextAlign.center),
-                  Gap(30),
+                  Gap(20),
                   CommonButton(
                     width: 200,
                     color: Colors.red,

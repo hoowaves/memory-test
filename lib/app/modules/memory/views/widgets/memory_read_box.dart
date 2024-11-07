@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:hoowave_memory_editor/app/modules/memory/controllers/memory_controller.dart';
 
 import '../../../../data/model/memory_format.dart';
-import '../../../../data/model/read_memory_model.dart';
 
 class MemoryReadBox {
   static Widget build({required MemoryController controller}) {
